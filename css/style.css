@@ -1,0 +1,822 @@
+:root {
+  --bg: #1b1b1d;
+  --panel: #26262a;
+  --panel-border: #3a3a40;
+  --brass: #c9a44c;
+  --brass-dim: #8a7438;
+  --lamp-off: #3a342a;
+  --lamp-on: #ffcf4d;
+  --lamp-glow: #ffb000;
+  --text: #e8e6e1;
+  --text-dim: #9a9a9e;
+  --key-bg: #2f2f34;
+  --key-active: #4a4434;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid var(--panel-border);
+  background: linear-gradient(180deg, #232326, #1b1b1d);
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-btn {
+  background: var(--key-bg);
+  color: var(--text-dim);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  border-color: var(--brass-dim);
+  color: var(--text);
+}
+
+.tab-btn.active {
+  background: var(--brass);
+  color: #1b1b1d;
+  border-color: var(--brass);
+  font-weight: 600;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.15em;
+  color: var(--brass);
+}
+
+.app-header .subtitle {
+  display: inline-block;
+  margin-left: 0.8rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-transform: none;
+  font-weight: normal;
+}
+
+.app-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.view {
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.view.active {
+  display: flex;
+}
+
+/* ---------- Panel de configuración ---------- */
+
+.config-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.config-group h2 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim);
+}
+
+.rotor-config {
+  display: flex;
+  gap: 1rem;
+}
+
+.rotor-config .rotor-config-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rotor-config label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+select, input[type="text"] {
+  background: var(--key-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.config-group small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+}
+
+#reset-btn {
+  background: var(--brass);
+  color: #1b1b1d;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+#reset-btn:hover {
+  background: #ddb964;
+}
+
+/* ---------- Rotores ---------- */
+
+.rotor-display {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1.5rem 1rem;
+}
+
+.rotor-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.rotor-dial {
+  width: 160px;
+  height: 160px;
+}
+
+.dial-ring {
+  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transform-origin: 110px 110px;
+}
+
+.dial-ring text {
+  fill: var(--text-dim);
+  font-size: 13px;
+  font-family: "Courier New", monospace;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.dial-ring text.active {
+  fill: var(--brass);
+  font-weight: bold;
+}
+
+.dial-pointer {
+  fill: var(--brass);
+}
+
+.dial-track {
+  fill: none;
+  stroke: var(--panel-border);
+  stroke-width: 1;
+}
+
+.rotor-window {
+  width: 64px;
+  height: 64px;
+  background: #0e0e10;
+  border: 2px solid var(--brass-dim);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 8px #000;
+}
+
+.rotor-letter {
+  font-family: "Courier New", monospace;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: var(--lamp-on);
+  text-shadow: 0 0 8px var(--lamp-glow);
+}
+
+.rotor-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Entrada / salida de texto ---------- */
+
+.io-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.io-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.io-group label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim);
+}
+
+textarea {
+  background: var(--key-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.6rem;
+  font-family: "Courier New", monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  resize: vertical;
+}
+
+/* ---------- Lámparas y teclado ---------- */
+
+.lampboard, .keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lamp, .key {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.lamp {
+  background: var(--lamp-off);
+  color: #6a6258;
+  border: 2px solid #4a443a;
+  transition: background 0.08s, color 0.08s, box-shadow 0.08s;
+}
+
+.lamp.lit {
+  background: var(--lamp-on);
+  color: #2a1d00;
+  box-shadow: 0 0 14px var(--lamp-glow), 0 0 28px var(--lamp-glow);
+  border-color: var(--lamp-glow);
+}
+
+.key {
+  background: var(--key-bg);
+  color: var(--text);
+  border: 2px solid var(--panel-border);
+  cursor: pointer;
+  transition: background 0.08s, transform 0.05s;
+}
+
+.key:hover {
+  border-color: var(--brass-dim);
+}
+
+.key:active, .key.pressed {
+  background: var(--key-active);
+  transform: scale(0.94);
+}
+
+@media (max-width: 700px) {
+  .io-panel {
+    grid-template-columns: 1fr;
+  }
+  .rotor-display {
+    gap: 1rem;
+  }
+  .rotor-dial {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+/* ================= Capa Bombe ================= */
+
+.crib-group {
+  flex: 1 1 100%;
+}
+
+.crib-inputs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.crib-inputs .io-group {
+  flex: 1;
+  min-width: 220px;
+}
+
+.crib-inputs input[type="text"] {
+  width: 100%;
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.crib-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+}
+
+.crib-actions button,
+.search-group button {
+  background: var(--key-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.crib-actions button:hover,
+.search-group button:hover:not(:disabled) {
+  border-color: var(--brass-dim);
+}
+
+.search-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+  cursor: pointer;
+}
+
+.status-msg {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.5rem;
+  min-height: 1.2em;
+}
+
+.status-msg.error {
+  color: #ff6b6b;
+}
+
+.status-msg.ok {
+  color: #8fd17a;
+}
+
+.progress-bar {
+  margin-top: 0.7rem;
+  height: 6px;
+  background: var(--key-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--brass);
+  transition: width 0.2s ease;
+}
+
+/* ---------- Menú / grafo ---------- */
+
+.menu-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.menu-panel h2 {
+  margin: 0 0 0.8rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim);
+}
+
+.menu-content {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.menu-graph {
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.menu-graph .menu-edge {
+  stroke: var(--panel-border);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.menu-graph .menu-edge.loop {
+  stroke: var(--brass);
+  stroke-width: 2.5;
+}
+
+.menu-graph .menu-node circle {
+  fill: var(--key-bg);
+  stroke: var(--panel-border);
+  stroke-width: 1;
+}
+
+.menu-graph .menu-node.active circle {
+  fill: var(--brass);
+  stroke: var(--brass);
+}
+
+.menu-graph .menu-node text {
+  fill: var(--text-dim);
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  font-weight: bold;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.menu-graph .menu-node.active text {
+  fill: #1b1b1d;
+}
+
+.menu-info {
+  flex: 1;
+  min-width: 220px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.menu-info strong {
+  color: var(--brass);
+}
+
+.menu-info .loop-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+/* ---------- Resultados ---------- */
+
+.bombe-results {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.bombe-results h2 {
+  margin: 0 0 0.8rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim);
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.results-table th,
+.results-table td {
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.results-table th {
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.results-table td {
+  font-family: "Courier New", monospace;
+}
+
+.results-table tbody tr {
+  cursor: pointer;
+}
+
+.results-table tbody tr:hover {
+  background: var(--key-bg);
+}
+
+.results-table tbody tr.selected {
+  background: var(--key-active);
+}
+
+.results-table button {
+  background: var(--brass);
+  color: #1b1b1d;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Diagonal board ---------- */
+
+.diagonal-section {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+
+.diagonal-section h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--brass-dim);
+}
+
+.diagonal-caption {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0 0 0.8rem;
+}
+
+.diagonal-grid {
+  display: grid;
+  grid-template-columns: repeat(27, minmax(0, 1fr));
+  gap: 1px;
+  max-width: 560px;
+  font-family: "Courier New", monospace;
+  font-size: 0.65rem;
+}
+
+.diagonal-grid .cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--key-bg);
+  color: var(--text-dim);
+}
+
+.diagonal-grid .cell.header {
+  background: transparent;
+  color: var(--brass-dim);
+  font-weight: bold;
+}
+
+.diagonal-grid .cell.active {
+  background: var(--brass);
+  color: #1b1b1d;
+  font-weight: bold;
+  box-shadow: 0 0 6px var(--lamp-glow);
+}
+
+@media (max-width: 700px) {
+  .menu-graph {
+    width: 100%;
+    height: auto;
+  }
+  .diagonal-grid {
+    font-size: 0.5rem;
+  }
+}
+
+/* ================= Capa Manual ================= */
+
+.manual-content {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.manual-content h2 {
+  margin-top: 0;
+  color: var(--brass);
+  font-size: 1.3rem;
+}
+
+.manual-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--brass-dim);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.manual-content p,
+.manual-content li {
+  color: var(--text);
+}
+
+.manual-content code {
+  background: var(--key-bg);
+  border-radius: 3px;
+  padding: 0.1rem 0.35rem;
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+  color: var(--lamp-on);
+}
+
+.manual-content figure {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.manual-content figure img {
+  max-width: 100%;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+
+.manual-content figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.manual-content pre {
+  background: var(--key-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.manual-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.manual-table th,
+.manual-table td {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--panel-border);
+  text-align: left;
+}
+
+.manual-table th {
+  background: var(--key-bg);
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+/* ================= Capa Acerca de ================= */
+
+.about-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 2rem;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-card h2 {
+  margin-top: 0;
+  color: var(--brass);
+}
+
+.about-name {
+  margin: 0.5rem 0 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.about-role {
+  margin: 0.2rem 0 1rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.about-bio {
+  text-align: left;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.about-bio p {
+  margin: 0 0 1rem;
+}
+
+.about-bio p:last-child {
+  margin-bottom: 0;
+}
+
+.about-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-links a {
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  color: var(--brass);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.about-links a:hover {
+  border-color: var(--brass-dim);
+  background: var(--key-bg);
+}

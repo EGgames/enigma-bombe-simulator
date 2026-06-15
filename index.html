@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enigma &amp; Bombe — Simuladores</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>ENIGMA <span class="subtitle">simulador de rotores en tiempo real</span></h1>
+    <nav class="tabs" aria-label="Capas">
+      <button class="tab-btn active" data-view="enigma-view" type="button">Enigma</button>
+      <button class="tab-btn" data-view="bombe-view" type="button">Bombe</button>
+      <button class="tab-btn" data-view="manual-view" type="button">Manual</button>
+      <button class="tab-btn" data-view="about-view" type="button">Acerca de</button>
+    </nav>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ===================== CAPA ENIGMA ===================== -->
+    <section id="enigma-view" class="view">
+
+      <section class="config-panel" aria-label="Configuración de la máquina">
+        <div class="config-group">
+          <h2>Rotores</h2>
+          <div class="rotor-config" id="rotor-config">
+            <!-- generado por JS: tipo, anillo (ring) y posición inicial por rotor -->
+          </div>
+        </div>
+
+        <div class="config-group">
+          <h2>Reflector</h2>
+          <select id="reflector-select">
+            <option value="B">UKW-B</option>
+            <option value="C">UKW-C</option>
+            <option value="A">UKW-A</option>
+          </select>
+        </div>
+
+        <div class="config-group">
+          <h2>Clavijero (Steckerbrett)</h2>
+          <input type="text" id="plugboard-input" placeholder="ej: AB CD EF" maxlength="80">
+          <small>Pares de letras separados por espacio</small>
+        </div>
+
+        <div class="config-group">
+          <button id="reset-btn" type="button">Reiniciar máquina</button>
+        </div>
+      </section>
+
+      <section class="rotor-display" aria-label="Rotores">
+        <div class="rotor-unit" data-rotor="0">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window">
+            <span class="rotor-letter">A</span>
+          </div>
+          <div class="rotor-label">Rotor izq.</div>
+        </div>
+        <div class="rotor-unit" data-rotor="1">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window">
+            <span class="rotor-letter">A</span>
+          </div>
+          <div class="rotor-label">Rotor medio</div>
+        </div>
+        <div class="rotor-unit" data-rotor="2">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window">
+            <span class="rotor-letter">A</span>
+          </div>
+          <div class="rotor-label">Rotor der.</div>
+        </div>
+      </section>
+
+      <section class="io-panel" aria-label="Entrada y salida">
+        <div class="io-group">
+          <label for="plain-text">Texto plano</label>
+          <textarea id="plain-text" rows="3" placeholder="Escribí aquí o usá el teclado virtual..." spellcheck="false"></textarea>
+        </div>
+        <div class="io-group">
+          <label for="cipher-text">Texto cifrado</label>
+          <textarea id="cipher-text" rows="3" readonly spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <section class="lampboard" aria-label="Lámparas">
+        <div class="keyboard-row" data-row="0"></div>
+        <div class="keyboard-row" data-row="1"></div>
+        <div class="keyboard-row" data-row="2"></div>
+      </section>
+
+      <section class="keyboard" aria-label="Teclado virtual">
+        <div class="keyboard-row" data-row="0"></div>
+        <div class="keyboard-row" data-row="1"></div>
+        <div class="keyboard-row" data-row="2"></div>
+      </section>
+
+    </section>
+
+    <!-- ===================== CAPA BOMBE ===================== -->
+    <section id="bombe-view" class="view">
+
+      <section class="config-panel" aria-label="Crib">
+        <div class="config-group crib-group">
+          <h2>Crib (texto plano probable)</h2>
+          <div class="crib-inputs">
+            <div class="io-group">
+              <label for="crib-cipher">Texto cifrado</label>
+              <input type="text" id="crib-cipher" spellcheck="false" autocomplete="off">
+            </div>
+            <div class="io-group">
+              <label for="crib-plain">Crib (texto plano)</label>
+              <input type="text" id="crib-plain" spellcheck="false" autocomplete="off">
+            </div>
+          </div>
+          <div class="crib-actions">
+            <button id="crib-example-btn" type="button">Cargar ejemplo</button>
+            <button id="crib-menu-btn" type="button">Generar menú</button>
+          </div>
+          <div id="crib-status" class="status-msg"></div>
+        </div>
+
+        <div class="config-group">
+          <h2>Rotores a probar</h2>
+          <div class="rotor-config" id="bombe-rotor-config"></div>
+        </div>
+
+        <div class="config-group">
+          <h2>Reflector</h2>
+          <select id="bombe-reflector-select">
+            <option value="B">UKW-B</option>
+            <option value="C">UKW-C</option>
+            <option value="A">UKW-A</option>
+          </select>
+        </div>
+
+        <div class="config-group">
+          <h2>Modo de búsqueda</h2>
+          <label class="radio-label"><input type="radio" name="bombe-search-mode" value="one" checked> Probar este orden</label>
+          <label class="radio-label"><input type="radio" name="bombe-search-mode" value="all"> Probar las 60 combinaciones</label>
+        </div>
+
+        <div class="config-group search-group">
+          <button id="bombe-search-btn" type="button" disabled>Iniciar búsqueda</button>
+          <div class="progress-bar"><div id="bombe-progress" class="progress-fill"></div></div>
+        </div>
+      </section>
+
+      <section class="menu-panel" aria-label="Menú">
+        <h2>Menú (grafo del crib)</h2>
+        <div class="menu-content">
+          <svg id="menu-graph" class="menu-graph" viewBox="0 0 320 320"></svg>
+          <div id="menu-info" class="menu-info">
+            Ingresá un crib y hacé click en "Generar menú".
+          </div>
+        </div>
+      </section>
+
+      <section class="rotor-display" id="bombe-drums" aria-label="Tambores de la Bombe">
+        <div class="rotor-unit" data-rotor="0">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window"><span class="rotor-letter">A</span></div>
+          <div class="rotor-label">Tambor izq.</div>
+        </div>
+        <div class="rotor-unit" data-rotor="1">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window"><span class="rotor-letter">A</span></div>
+          <div class="rotor-label">Tambor medio</div>
+        </div>
+        <div class="rotor-unit" data-rotor="2">
+          <svg class="rotor-dial" viewBox="0 0 220 220"></svg>
+          <div class="rotor-window"><span class="rotor-letter">A</span></div>
+          <div class="rotor-label">Tambor der.</div>
+        </div>
+      </section>
+
+      <section class="bombe-results" aria-label="Resultados">
+        <h2>Resultados (stops)</h2>
+        <div id="bombe-results-empty" class="status-msg">Generá un menú e iniciá la búsqueda para ver resultados.</div>
+        <table id="bombe-results-table" class="results-table hidden">
+          <thead>
+            <tr>
+              <th>Orden de rotores</th>
+              <th>Posición inicial</th>
+              <th>Letra de prueba</th>
+              <th>Hipótesis clavija</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="diagonal-section" aria-label="Diagonal board">
+        <h2>Diagonal board</h2>
+        <p class="diagonal-caption">Conexiones hipotéticas del clavijero para el stop seleccionado (simetría P(a)=b ⇔ P(b)=a).</p>
+        <div id="diagonal-grid" class="diagonal-grid"></div>
+      </section>
+
+    </section>
+
+    <!-- ===================== CAPA MANUAL ===================== -->
+    <section id="manual-view" class="view">
+      <article class="manual-content">
+        <h2>Manual paso a paso: de "HOLA COMO ESTAS" a la Bombe... y de vuelta</h2>
+        <p>
+          Este manual muestra, con capturas de pantalla reales del simulador, el
+          <strong>circuito completo</strong> de un mensaje:
+        </p>
+        <ol>
+          <li>Se cifra <code>HOLA COMO ESTAS</code> con la máquina <strong>Enigma</strong>, usando una configuración secreta de rotores.</li>
+          <li>Un "criptoanalista" que solo conoce el texto cifrado y <strong>sospecha</strong> cuál podría ser el texto plano (un <em>crib</em>) usa la <strong>Bombe</strong> para deducir la configuración de rotores.</li>
+          <li>Esa configuración se carga de nuevo en Enigma y se usa para <strong>descifrar</strong> el mensaje, recuperando el texto original.</li>
+        </ol>
+        <p>Todo esto ocurre dentro de la misma app, cambiando entre las pestañas <strong>Enigma</strong> y <strong>Bombe</strong>.</p>
+
+        <h3>La clave del día (lo que normalmente sería secreto)</h3>
+        <table class="manual-table">
+          <tr><th>Parámetro</th><th>Valor</th></tr>
+          <tr><td>Rotor izquierdo</td><td><strong>I</strong></td></tr>
+          <tr><td>Rotor medio</td><td><strong>II</strong></td></tr>
+          <tr><td>Rotor derecho</td><td><strong>III</strong></td></tr>
+          <tr><td>Anillos (Ringstellung)</td><td>A, A, A</td></tr>
+          <tr><td>Posición inicial</td><td><strong>H, P, Y</strong></td></tr>
+          <tr><td>Reflector</td><td>UKW-B</td></tr>
+          <tr><td>Clavijero (Steckerbrett)</td><td>sin conexiones</td></tr>
+        </table>
+        <p><small>Como el teclado de Enigma solo tiene letras A-Z, el mensaje <code>HOLA COMO ESTAS</code> se escribe sin espacios: <code>HOLACOMOESTAS</code>.</small></p>
+
+        <h3>Paso 0 — Abrir el simulador</h3>
+        <p>Al abrir la app aparece la pestaña <strong>Enigma</strong> con la configuración por defecto (rotores I-II-III, anillos y posiciones en <code>A</code>, reflector UKW-B, sin clavijero), los tres discos de los rotores, el teclado virtual y el panel de lámparas.</p>
+        <figure>
+          <img src="img/manual/00-enigma-inicial.png" alt="Estado inicial del simulador Enigma">
+          <figcaption>Estado inicial del simulador Enigma</figcaption>
+        </figure>
+
+        <h3>Paso 1 — Configurar la clave del día y cifrar el mensaje</h3>
+        <p>En el panel <strong>Rotores</strong>, se cambia la posición inicial de cada rotor a <code>H</code>, <code>P</code>, <code>Y</code> (izquierdo, medio, derecho) y se hace click en <strong>"Reiniciar máquina"</strong> para aplicar la nueva posición. Los discos giran hasta mostrar <code>H</code> / <code>P</code> / <code>Y</code> bajo el puntero.</p>
+        <figure>
+          <img src="img/manual/01-config-hpy.png" alt="Enigma configurada con posición inicial H-P-Y">
+          <figcaption>Enigma configurada con posición inicial H-P-Y</figcaption>
+        </figure>
+        <p>Ahora se escribe <code>HOLACOMOESTAS</code> letra por letra (con el teclado virtual o el físico). Cada pulsación hace girar los rotores, enciende la lámpara correspondiente y agrega las letras a los cuadros de texto plano/cifrado.</p>
+        <p>Al terminar, el texto plano <code>HOLACOMOESTAS</code> se convirtió en el texto cifrado <strong><code>TAFCHJEMHTATA</code></strong> (se ve la última lámpara encendida, <code>A</code>):</p>
+        <figure>
+          <img src="img/manual/02-cifrado.png" alt="Mensaje cifrado: HOLACOMOESTAS -> TAFCHJEMHTATA">
+          <figcaption>Mensaje cifrado: HOLACOMOESTAS → TAFCHJEMHTATA</figcaption>
+        </figure>
+        <p>Este <code>TAFCHJEMHTATA</code> es lo único que viajaría "por el aire" — es lo que un interceptor podría capturar.</p>
+
+        <h3>Paso 2 — Pasar a la Bombe: cargar el cifrado y el "crib"</h3>
+        <p>Se cambia a la pestaña <strong>Bombe</strong>. Tenemos el texto cifrado <code>TAFCHJEMHTATA</code> y <strong>sospechamos</strong> que el mensaje original es <code>HOLACOMOESTAS</code> (esto es el <em>crib</em>: una hipótesis sobre el texto plano, alineada letra a letra con el cifrado).</p>
+        <p>Se completan los campos <strong>Texto cifrado</strong> (<code>TAFCHJEMHTATA</code>) y <strong>Crib (texto plano)</strong> (<code>HOLACOMOESTAS</code>), y se hace click en <strong>"Generar menú"</strong>. La app construye el <strong>menú</strong>: un grafo donde cada letra es un nodo y cada posición del crib agrega una arista entre la letra plana y la letra cifrada de esa posición. Luego busca la letra con más <strong>bucles cerrados</strong> (<em>loops</em>).</p>
+        <p>Se generan <strong>13 aristas</strong> y la letra <strong>A</strong> resulta la mejor letra de prueba, con <strong>10 bucles</strong> distintos:</p>
+        <figure>
+          <img src="img/manual/03-menu.png" alt="Menú generado a partir del crib">
+          <figcaption>Menú generado: 13 aristas, letra de prueba A, 10 bucles</figcaption>
+        </figure>
+
+        <h3>Paso 3 — Ejecutar la búsqueda</h3>
+        <p>El panel "Rotores a probar" viene con el orden <strong>I-II-III</strong>, igual al usado para cifrar (en la práctica habría que probar las 60 combinaciones posibles). Al hacer click en <strong>"Iniciar búsqueda"</strong>, los tres tambores recorren las 26³ = 17.576 posiciones posibles, comprobando si los 10 bucles del menú son eléctricamente consistentes.</p>
+        <p>Los tambores se detienen en <strong>H / P / Y</strong> y la tabla de resultados muestra una única fila:</p>
+        <table class="manual-table">
+          <tr><th>Orden de rotores</th><th>Posición inicial</th><th>Letra de prueba</th><th>Hipótesis clavija</th></tr>
+          <tr><td>I-II-III</td><td><strong>HPY</strong></td><td>A</td><td>A (sin clavija)</td></tr>
+        </table>
+        <p>De las 17.576 posiciones posibles, <strong>solo una</strong> es consistente con el crib — y es exactamente la posición secreta <code>HPY</code> usada para cifrar. El <strong>diagonal board</strong> resalta la celda A↔A correspondiente a esa hipótesis.</p>
+        <figure>
+          <img src="img/manual/04-resultado.png" alt="Resultado de la búsqueda: un único stop en HPY">
+          <figcaption>Resultado de la búsqueda: un único stop en HPY</figcaption>
+        </figure>
+
+        <h3>Paso 4 — Cargar la solución en Enigma</h3>
+        <p>Al hacer click en <strong>"Cargar en Enigma"</strong>, la app cambia a la pestaña Enigma, configura los rotores I-II-III, anillos A, posición inicial H-P-Y, reflector UKW-B, deja el clavijero vacío y reinicia la máquina.</p>
+        <figure>
+          <img src="img/manual/05-cargado-en-enigma.png" alt="Configuración deducida por la Bombe, cargada en Enigma">
+          <figcaption>Configuración deducida por la Bombe, cargada en Enigma</figcaption>
+        </figure>
+        <p>Esta es <strong>exactamente</strong> la misma configuración secreta del Paso 1 — la Bombe la reconstruyó sin haberla visto, solo a partir del texto cifrado y de una hipótesis sobre el texto plano.</p>
+
+        <h3>Paso 5 — Descifrar y recuperar el mensaje original</h3>
+        <p>Como Enigma es <strong>recíproca</strong>, basta con escribir el texto cifrado <code>TAFCHJEMHTATA</code> con esta nueva configuración para recuperar letra por letra el texto plano original:</p>
+        <figure>
+          <img src="img/manual/06-descifrado.png" alt="Descifrado: TAFCHJEMHTATA -> HOLACOMOESTAS">
+          <figcaption>Descifrado: TAFCHJEMHTATA → HOLACOMOESTAS</figcaption>
+        </figure>
+        <p><code>TAFCHJEMHTATA</code> → <strong><code>HOLACOMOESTAS</code></strong>, es decir, <em>HOLA COMO ESTAS</em>. 🎉</p>
+
+        <h3>Resumen del circuito completo</h3>
+        <pre>HOLACOMOESTAS  --[Enigma, HPY]-->  TAFCHJEMHTATA            (Paso 1, pestaña Enigma)
+TAFCHJEMHTATA  + crib "HOLACOMOESTAS"
+               --[Bombe: menú -&gt; búsqueda]-->  stop = HPY    (Pasos 2-3, pestaña Bombe)
+HPY  --[Cargar en Enigma]-->  Enigma configurada en HPY      (Paso 4)
+TAFCHJEMHTATA  --[Enigma, HPY]-->  HOLACOMOESTAS             (Paso 5, pestaña Enigma)</pre>
+        <p>La Bombe nunca "rompe" Enigma por fuerza bruta ingenua: usa el <em>crib</em> para construir un menú con bucles, y esos bucles descartan casi todas las 17.576 posiciones de una sola pasada. Si el crib es correcto, suele quedar un único candidato — como en este ejemplo — que ya se puede usar directamente para descifrar el resto del mensaje.</p>
+      </article>
+    </section>
+
+    <!-- ===================== CAPA ACERCA DE ===================== -->
+    <section id="about-view" class="view">
+      <article class="about-card">
+        <h2>Acerca de</h2>
+        <p class="about-name">Emiliano Galmarini</p>
+        <p class="about-role">Desarrollador · Maestro de Educación Primaria · Licenciado en Ingeniería en Sistemas Computacionales</p>
+        <div class="about-bio">
+          <p>
+            Tengo 31 años y una gran pasión por la tecnología, la informática
+            y el desarrollo de proyectos vinculados a la computación. A lo
+            largo de mi formación y experiencia he trabajado en distintas
+            áreas relacionadas con el desarrollo de software, la
+            programación, la robótica y la creación de videojuegos, lo que
+            me ha permitido comprender la importancia de los avances
+            tecnológicos que marcaron la historia de la informática.
+          </p>
+          <p>
+            Este proyecto surge como un homenaje a Alan Turing, una de las
+            figuras más influyentes en el desarrollo de la ciencia
+            informática moderna. Mi objetivo fue construir una
+            representación práctica que permitiera demostrar de manera
+            sencilla y universal el funcionamiento de las dos partes
+            principales de esta máquina, facilitando la comprensión de
+            conceptos que, aunque fundamentales, suelen abordarse únicamente
+            desde la teoría.
+          </p>
+          <p>
+            Además de reconocer el legado de Turing, este trabajo busca
+            acercar al público a uno de los hitos más importantes de la
+            historia de la computación, mostrando cómo sus ideas sentaron
+            las bases de los sistemas informáticos actuales. Considero que
+            comprender estos orígenes permite valorar mejor el enorme
+            impacto que tuvieron en el desarrollo de la tecnología moderna.
+          </p>
+          <p>
+            Como desarrollador y entusiasta de la informática, siempre me ha
+            interesado transformar conceptos complejos en experiencias
+            prácticas e interactivas. Por ello, este proyecto no solo
+            representa un ejercicio técnico, sino también una forma de
+            divulgar conocimiento y destacar la relevancia histórica de una
+            máquina que cambió para siempre nuestra manera de entender el
+            procesamiento de la información.
+          </p>
+          <p>
+            A través de este trabajo busco demostrar que muchos de los
+            principios que utilizamos hoy en computadoras, sistemas
+            automatizados e incluso inteligencia artificial tienen sus
+            raíces en las ideas propuestas por Alan Turing hace más de medio
+            siglo, reafirmando su importancia como uno de los padres de la
+            computación moderna.
+          </p>
+        </div>
+        <ul class="about-links">
+          <li><a href="mailto:emilianogalmarini@gmail.com">emilianogalmarini@gmail.com</a></li>
+        </ul>
+      </article>
+    </section>
+
+  </main>
+
+  <script src="js/enigma.js"></script>
+  <script src="js/bombe.js"></script>
+  <script src="js/ui-helpers.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/app-bombe.js"></script>
+  <script src="js/tabs.js"></script>
+</body>
+</html>
