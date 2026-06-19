@@ -54,6 +54,39 @@
     return { edges, cipherText: C, crib: P };
   }
 
+  // Desliza un crib (más corto que el cifrado, o de igual longitud) por todas
+  // las posiciones posibles dentro del texto cifrado ("crib dragging"). En
+  // cada posición se descarta automáticamente si alguna letra del crib
+  // quedaría alineada con la misma letra en el cifrado (imposible en
+  // Enigma). Devuelve únicamente las posiciones que SÍ son compatibles.
+  function findCribPositions(cipherText, crib) {
+    const C = cipherText.toUpperCase().replace(/[^A-Z]/g, "");
+    const P = crib.toUpperCase().replace(/[^A-Z]/g, "");
+
+    if (C.length === 0 || P.length === 0) {
+      throw new Error("Ingresá el texto cifrado y el crib.");
+    }
+    if (P.length > C.length) {
+      throw new Error(`El crib (${P.length} letras) es más largo que el texto cifrado (${C.length} letras).`);
+    }
+
+    const positions = [];
+    const maxOffset = C.length - P.length;
+    for (let offset = 0; offset <= maxOffset; offset++) {
+      let valid = true;
+      for (let i = 0; i < P.length; i++) {
+        if (P.charCodeAt(i) === C.charCodeAt(offset + i)) {
+          valid = false;
+          break;
+        }
+      }
+      if (valid) {
+        positions.push({ offset, cipherSlice: C.slice(offset, offset + P.length) });
+      }
+    }
+    return { cipherText: C, crib: P, positions };
+  }
+
   /* ---------- Búsqueda de bucles ---------- */
 
   // Devuelve todos los ciclos simples (arrays de índices de arista) que
@@ -271,6 +304,7 @@
     ALPHABET,
     ROTOR_TYPES,
     buildMenu,
+    findCribPositions,
     findLoopsForVertex,
     chooseTestLetter,
     buildScramblerTable,

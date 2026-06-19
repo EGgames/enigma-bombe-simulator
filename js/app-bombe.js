@@ -27,6 +27,7 @@
   const cribExampleBtn = document.getElementById("crib-example-btn");
   const cribMenuBtn = document.getElementById("crib-menu-btn");
   const cribStatus = document.getElementById("crib-status");
+  const cribPositionsEl = document.getElementById("crib-positions");
 
   const rotorConfigEl = document.getElementById("bombe-rotor-config");
   const reflectorSelect = document.getElementById("bombe-reflector-select");
@@ -280,26 +281,101 @@
 
   /* ---------- Generar menú ---------- */
 
-  function generateMenu() {
-    let menu;
+  // El crib puede ser más corto que el texto cifrado: se lo "desliza" sobre
+  // el cifrado ("crib dragging") y se descartan automáticamente las
+  // posiciones donde alguna letra coincidiría con sí misma. Si queda más de
+  // una posición compatible, se le pide al usuario que elija una.
+  function failMenu(message) {
+    currentMenu = null;
+    currentTestInfo = null;
+    cribStatus.textContent = message;
+    cribStatus.className = "status-msg error";
+    menuGraphSvg.innerHTML = "";
+    menuInfoEl.textContent = 'Ingresá un crib válido y hacé click en "Generar menú".';
+    searchBtn.disabled = true;
+    resetResults();
+  }
+
+  function hideCribPositions() {
+    cribPositionsEl.innerHTML = "";
+    cribPositionsEl.classList.add("hidden");
+  }
+
+  function showCribPositions(cipherText, crib, positions, selectedOffset) {
+    cribPositionsEl.innerHTML = "";
+    cribPositionsEl.classList.remove("hidden");
+
+    positions.forEach(p => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "crib-position-btn" + (p.offset === selectedOffset ? " selected" : "");
+
+      const label = document.createElement("span");
+      label.textContent = p.cipherSlice;
+
+      const offset = document.createElement("span");
+      offset.className = "crib-position-offset";
+      offset.textContent = `letras ${p.offset + 1}–${p.offset + crib.length}`;
+
+      btn.append(label, offset);
+      btn.addEventListener("click", () => generateMenu(p.offset));
+      cribPositionsEl.appendChild(btn);
+    });
+  }
+
+  function generateMenu(forcedOffset) {
+    let result;
     try {
-      menu = Bombe.buildMenu(cribCipherInput.value, cribPlainInput.value);
+      result = Bombe.findCribPositions(cribCipherInput.value, cribPlainInput.value);
     } catch (err) {
+      failMenu(err.message);
+      hideCribPositions();
+      return;
+    }
+
+    const { cipherText, crib, positions } = result;
+
+    if (positions.length === 0) {
+      failMenu("Ninguna posición es compatible: el crib siempre coincide con el cifrado en alguna letra (imposible en Enigma). Probá otro crib.");
+      hideCribPositions();
+      return;
+    }
+
+    if (positions.length > 1 && forcedOffset === undefined) {
+      showCribPositions(cipherText, crib, positions);
       currentMenu = null;
       currentTestInfo = null;
-      cribStatus.textContent = err.message;
-      cribStatus.className = "status-msg error";
+      cribStatus.textContent = `El crib encaja en ${positions.length} posiciones posibles del cifrado. Elegí una para generar el menú.`;
+      cribStatus.className = "status-msg ok";
       menuGraphSvg.innerHTML = "";
-      menuInfoEl.textContent = 'Ingresá un crib válido y hacé click en "Generar menú".';
+      menuInfoEl.textContent = "Elegí una posición del crib arriba para generar el menú.";
       searchBtn.disabled = true;
       resetResults();
+      return;
+    }
+
+    const offset = forcedOffset !== undefined ? forcedOffset : positions[0].offset;
+    const chosen = positions.find(p => p.offset === offset) || positions[0];
+
+    let menu;
+    try {
+      menu = Bombe.buildMenu(chosen.cipherSlice, crib);
+    } catch (err) {
+      failMenu(err.message);
+      hideCribPositions();
       return;
     }
 
     currentMenu = menu;
     currentTestInfo = Bombe.chooseTestLetter(currentMenu.edges, 8);
 
-    cribStatus.textContent = `Menú generado: ${currentMenu.edges.length} posiciones.`;
+    if (positions.length > 1) {
+      showCribPositions(cipherText, crib, positions, offset);
+      cribStatus.textContent = `Menú generado para la posición ${offset + 1}: ${currentMenu.edges.length} aristas.`;
+    } else {
+      hideCribPositions();
+      cribStatus.textContent = `Menú generado: ${currentMenu.edges.length} aristas.`;
+    }
     cribStatus.className = "status-msg ok";
 
     renderMenuGraph();
@@ -487,7 +563,7 @@
     });
   });
 
-  cribMenuBtn.addEventListener("click", generateMenu);
+  cribMenuBtn.addEventListener("click", () => generateMenu());
 
   cribExampleBtn.addEventListener("click", () => {
     cribCipherInput.value = EXAMPLE.cipher;

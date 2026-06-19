@@ -111,15 +111,18 @@
               <input type="text" id="crib-cipher" spellcheck="false" autocomplete="off">
             </div>
             <div class="io-group">
-              <label for="crib-plain">Crib (texto plano)</label>
+              <label for="crib-plain">Crib (palabra o frase probable)</label>
               <input type="text" id="crib-plain" spellcheck="false" autocomplete="off">
             </div>
           </div>
+          <p class="hint-text">El crib no necesita cubrir todo el cifrado: si es más corto, la app lo desliza
+            sobre el texto cifrado ("crib dragging") y descarta automáticamente las posiciones imposibles.</p>
           <div class="crib-actions">
             <button id="crib-example-btn" type="button">Cargar ejemplo</button>
             <button id="crib-menu-btn" type="button">Generar menú</button>
           </div>
           <div id="crib-status" class="status-msg"></div>
+          <div id="crib-positions" class="crib-positions hidden"></div>
         </div>
 
         <div class="config-group">

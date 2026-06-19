@@ -383,6 +383,54 @@ textarea {
   margin-top: 0.7rem;
 }
 
+.hint-text {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin: 0.5rem 0 0;
+}
+
+.crib-positions {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.crib-positions.hidden {
+  display: none;
+}
+
+.crib-position-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  background: var(--key-bg);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: "Courier New", monospace;
+  text-align: left;
+}
+
+.crib-position-btn:hover {
+  border-color: var(--brass-dim);
+}
+
+.crib-position-btn.selected {
+  border-color: var(--brass);
+  background: rgba(180, 140, 70, 0.18);
+}
+
+.crib-position-btn .crib-position-offset {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
 .crib-actions button,
 .search-group button {
   background: var(--key-bg);
