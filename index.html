@@ -262,6 +262,21 @@
           <figcaption>Menú generado: 13 aristas, letra de prueba A, 10 bucles</figcaption>
         </figure>
 
+        <h3>Variante: crib más corto que el cifrado (<em>crib dragging</em>)</h3>
+        <p>En el Paso 2 el crib cubría las <strong>13 letras completas</strong> del cifrado, alineado desde el principio. En la práctica un criptoanalista casi nunca sospecha el mensaje entero: sospecha una <strong>frase corta</strong> que podría aparecer en <em>cualquier parte</em> de un cifrado más largo — por ejemplo, que en algún punto del mensaje aparece el saludo típico <code>ANXEINSXKOMMTXSOFORT</code> ("AN EINS X KOMMT X SOFORT").</p>
+        <p>Si el <strong>texto cifrado</strong> es más largo que el <strong>crib</strong>, la app ya no exige que coincidan letra por letra desde la posición 0. En su lugar <strong>desliza el crib sobre el cifrado</strong> — la técnica real de <em>crib dragging</em> — y descarta automáticamente cada posición donde alguna letra coincidiría con sí misma (imposible en Enigma, porque el reflector nunca deja una letra fija).</p>
+        <p>Por ejemplo, con un cifrado de 30 letras y un crib de 20, hay 11 desplazamientos posibles; solo <strong>5</strong> sobreviven al filtro automático y se muestran como botones para elegir:</p>
+        <figure>
+          <img src="img/manual/07-crib-dragging-posiciones.png" alt="Posiciones candidatas tras deslizar el crib sobre el cifrado">
+          <figcaption>Posiciones candidatas tras deslizar el crib sobre el cifrado (5 de 11 sobreviven al filtro)</figcaption>
+        </figure>
+        <p>Al hacer click en la posición correcta (<code>letras 6–25</code>), la app construye el menú exactamente igual que en el Paso 2 — en este caso <strong>20 aristas</strong>, letra de prueba <strong>N</strong> y <strong>9 bucles</strong> — y queda listo para buscar con la Bombe:</p>
+        <figure>
+          <img src="img/manual/08-crib-dragging-menu.png" alt="Menú generado luego de elegir la posición correcta del crib">
+          <figcaption>Menú generado luego de elegir la posición correcta del crib</figcaption>
+        </figure>
+        <p>A partir de aquí el resto del proceso es idéntico al Paso 3 en adelante: se elige el orden de rotores a probar y se hace click en "Iniciar búsqueda".</p>
+
         <h3>Paso 3 — Ejecutar la búsqueda</h3>
         <p>El panel "Rotores a probar" viene con el orden <strong>I-II-III</strong>, igual al usado para cifrar (en la práctica habría que probar las 60 combinaciones posibles). Al hacer click en <strong>"Iniciar búsqueda"</strong>, los tres tambores recorren las 26³ = 17.576 posiciones posibles, comprobando si los 10 bucles del menú son eléctricamente consistentes.</p>
         <p>Los tambores se detienen en <strong>H / P / Y</strong> y la tabla de resultados muestra una única fila:</p>

@@ -100,6 +100,38 @@ En este caso se generan **13 aristas** (una por letra del crib) y la letra
 
 ---
 
+## Variante: crib más corto que el cifrado (*crib dragging*)
+
+En el Paso 2 el crib cubría las **13 letras completas** del cifrado, alineado
+desde el principio. En la práctica un criptoanalista casi nunca sospecha el
+mensaje entero: sospecha una **frase corta** que podría aparecer en
+*cualquier parte* de un cifrado más largo — por ejemplo, que en algún punto
+del mensaje aparece el saludo típico `ANXEINSXKOMMTXSOFORT`
+("AN EINS X KOMMT X SOFORT").
+
+Si el **texto cifrado** es más largo que el **crib**, la app ya no exige que
+coincidan letra por letra desde la posición 0. En su lugar **desliza el
+crib sobre el cifrado** — la técnica real de *crib dragging* — y descarta
+automáticamente cada posición donde alguna letra coincidiría con sí misma
+(imposible en Enigma, porque el reflector nunca deja una letra fija).
+
+Por ejemplo, con un cifrado de 30 letras y un crib de 20, hay 11
+desplazamientos posibles; solo **5** sobreviven al filtro automático y se
+muestran como botones para elegir:
+
+![Posiciones candidatas tras deslizar el crib sobre el cifrado](img/manual/07-crib-dragging-posiciones.png)
+
+Al hacer click en la posición correcta (`letras 6–25`), la app construye el
+menú exactamente igual que en el Paso 2 — en este caso **20 aristas**, letra
+de prueba **N** y **9 bucles** — y queda listo para buscar con la Bombe:
+
+![Menú generado luego de elegir la posición correcta del crib](img/manual/08-crib-dragging-menu.png)
+
+A partir de aquí el resto del proceso es idéntico al Paso 3 en adelante: se
+elige el orden de rotores a probar y se hace click en "Iniciar búsqueda".
+
+---
+
 ## Paso 3 — Ejecutar la búsqueda
 
 Con el menú generado, el panel **"Rotores a probar"** ya viene con el orden
